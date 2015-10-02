@@ -6,7 +6,6 @@ import (
 	"math"
 	"strings"
 	"errors"
-//	"fmt"
 )
 
 // Provides map-like behavior with case-insensitive keys
@@ -77,6 +76,13 @@ func NewFilePart(fileobj io.Reader, length int) (*FilePart, error) {
 	if err != nil && err.Error() != "EOF" {
 		return nil, err
 	}
+	for len(buf) < length && err == nil {
+		tmp, err := filePart.Read(-1)
+		if err == nil {
+			buf = append(buf, tmp...)
+		}
+	}
+	
 	filePart.offset = 0
 	filePart.fileobj = bytes.NewBuffer(buf)
 	return filePart, nil

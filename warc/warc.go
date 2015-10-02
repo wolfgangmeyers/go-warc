@@ -238,6 +238,7 @@ func (wr *WARCRecord) GetPayload() *utils.FilePart {
 
 type WARCFile struct {
 	filehandle io.ReadCloser
+	filebuf *bufio.Reader
 	gzipfile   *gzip.Reader
 	reader     *WARCReader
 }
@@ -245,7 +246,8 @@ type WARCFile struct {
 // Creates a new WARCFile
 // input should be a handle to a gzipped WARC file
 func NewWARCFile(reader io.ReadCloser) (*WARCFile, error) {
-	gzipfile, err := gzip.NewReader(reader)
+	filebuf := bufio.NewReader(reader)
+	gzipfile, err := gzip.NewReader(filebuf)
 	if err != nil {
 		return nil, err
 	}
@@ -254,8 +256,9 @@ func NewWARCFile(reader io.ReadCloser) (*WARCFile, error) {
 	// keep a handle to underlying file so that it can be closed.
 	wf := &WARCFile{
 		filehandle: reader,
+		filebuf: filebuf,
 		gzipfile:   gzipfile,
-		reader:     NewWARCReader(reader, gzipfile),
+		reader:     NewWARCReader(filebuf, gzipfile),
 	}
 	return wf, nil
 }
@@ -302,7 +305,7 @@ func (wr *WARCReader) ReadHeader(reader *bufio.Reader) (*WARCHeader, error) {
 	headers := map[string]string{}
 	for {
 		line, err := reader.ReadString('\n')
-		fmt.Println("*** header line - " + line)
+//		fmt.Println("*** header line - " + line)
 		if err != nil {
 			return nil, err
 		}
@@ -323,6 +326,7 @@ func (wr *WARCReader) ReadHeader(reader *bufio.Reader) (*WARCHeader, error) {
 func (wr *WARCReader) Expect(reader *bufio.Reader, expectedLine string, message string) error {
 	line, err := reader.ReadString('\n')
 	if err != nil {
+//		fmt.Println(err)
 		return err
 	}
 	if line != expectedLine {
@@ -335,20 +339,27 @@ func (wr *WARCReader) Expect(reader *bufio.Reader, expectedLine string, message 
 }
 
 func (wr *WARCReader) ReadRecord() (*WARCRecord, error) {
-	
 	reader := bufio.NewReader(wr.gzipfile)
 	header, err := wr.ReadHeader(reader)
 	
-	if err != nil && err.Error() == "unexpected EOF" {
+	if err != nil && strings.Index(err.Error(), "EOF") > -1 {
 		return nil, errors.New("EOF")
 	}
-	
+	if err != nil {
+		panic(err)
+	}
 	payload, err := utils.NewFilePart(reader, header.GetContentLength())
+	if err != nil {
+		panic(err)
+	}
 	// consume the footer from the previous record
 	wr.Expect(reader, "\r\n", "")
 	wr.Expect(reader, "\r\n", "")
+	// the last call advances to the end of the gzip file
+	wr.Expect(reader, "\r\n", "")
 	// start reading the next record in the gzip file
 	wr.gzipfile.Reset(wr.filehandle)
+	wr.gzipfile.Multistream(false)
 	
 	if err != nil {
 		return nil, err

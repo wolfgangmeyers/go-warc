@@ -5,8 +5,6 @@ import (
 	"compress/gzip"
 	. "gopkg.in/check.v1"
 	"testing"
-	//	"sort"
-	//	"strings"
 )
 
 func Test(t *testing.T) {
@@ -65,10 +63,10 @@ func getSampleWarcRecord(numRecords int) []byte {
 	gzout := gzip.NewWriter(&buf)
 	for i := 0; i < numRecords; i++ {
 		gzout.Write([]byte(text))
-		gzout.Flush()
+//		gzout.Flush()
+		gzout.Close()
 		gzout.Reset(&buf)
 	}
-	
 	return buf.Bytes()
 }
 
@@ -123,6 +121,7 @@ func (s *WARCReaderSuite) TestReadMultipleRecords(c *C) {
 	reader := bytes.NewReader(getSampleWarcRecord(5))
 	gzreader, err := gzip.NewReader(reader)
 	c.Assert(err, Equals, nil)
+	gzreader.Multistream(false)
 	warcReader := NewWARCReader(reader, gzreader)
 	for i := 0; i < 5; i++ {
 		record, err := warcReader.ReadRecord()

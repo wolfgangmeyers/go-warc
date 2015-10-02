@@ -16,6 +16,7 @@ func main() {
         reader.Iterate(func(wr *warc.WARCRecord, err error) {
                 if err == nil {
                         count++
+                        fmt.Printf("%v\n", count)
                 }
         })
         fmt.Printf("Counted %v records", count)
