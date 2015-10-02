@@ -69,34 +69,47 @@ func (s *FilePartSuite) SetUpSuite(c *C) {
 
 func (s *FilePartSuite) TestRead(c *C) {
 	part := NewFilePart(strings.NewReader(s.text), 0)
-	c.Assert(string(part.Read(-1)), Equals, "")
+	data, _ := part.Read(-1)
+	c.Assert(string(data), Equals, "")
 	
 	part = NewFilePart(strings.NewReader(s.text), 5)
-	c.Assert(string(part.Read(-1)), Equals, "aaaa\n")
+	data, _ = part.Read(-1)
+	c.Assert(string(data), Equals, "aaaa\n")
 	
 	part = NewFilePart(strings.NewReader(s.text), 10)
-	c.Assert(string(part.Read(-1)), Equals, "aaaa\nbbbb\n")
+	data, _ = part.Read(-1)
+	c.Assert(string(data), Equals, "aaaa\nbbbb\n")
 	
 	// try with large data
 	part = NewFilePart(strings.NewReader(strings.Repeat("a", 10000)), 10)
-	c.Assert(len(part.Read(-1)), Equals, 10)
+	data, _ = part.Read(-1)
+	c.Assert(len(data), Equals, 10)
 }
 
 func (s *FilePartSuite) TestReadWithSize(c *C) {
 	part := NewFilePart(strings.NewReader(s.text), 10)
-	c.Assert(string(part.Read(3)), Equals, "aaa")
-	c.Assert(string(part.Read(3)), Equals, "a\nb")
-	c.Assert(string(part.Read(3)), Equals, "bbb")
-	c.Assert(string(part.Read(3)), Equals, "\n")
-	c.Assert(string(part.Read(3)), Equals, "")
+	data, _ := part.Read(3)
+	c.Assert(string(data), Equals, "aaa")
+	data, _ = part.Read(3)
+	c.Assert(string(data), Equals, "a\nb")
+	data, _ = part.Read(3)
+	c.Assert(string(data), Equals, "bbb")
+	data, _ = part.Read(3)
+	c.Assert(string(data), Equals, "\n")
+	data, _ = part.Read(3)
+	c.Assert(string(data), Equals, "")
 }
 
 func (s *FilePartSuite) TestReadline(c *C) {
 	part := NewFilePart(strings.NewReader(s.text), 11)
-	c.Assert(string(part.ReadLine()), Equals, "aaaa\n")
-	c.Assert(string(part.ReadLine()), Equals, "bbbb\n")
-	c.Assert(string(part.ReadLine()), Equals, "c")
-	c.Assert(string(part.ReadLine()), Equals, "")
+	data, _ := part.ReadLine()
+	c.Assert(string(data), Equals, "aaaa\n")
+	data, _ = part.ReadLine()
+	c.Assert(string(data), Equals, "bbbb\n")
+	data, _ = part.ReadLine()
+	c.Assert(string(data), Equals, "c")
+	data, _ = part.ReadLine()
+	c.Assert(string(data), Equals, "")
 }
 
 func (s *FilePartSuite) TestIterate(c *C) {
