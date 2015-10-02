@@ -66,7 +66,8 @@ Navigate to the root of the project and run:
 Documentation
 -------------
 
-The documentation of the warc library is available at http://warc.readthedocs.org/.
+There isn't any yet. The original python
+documentation of the warc library is available at http://warc.readthedocs.org/.
     
 License
 -------
