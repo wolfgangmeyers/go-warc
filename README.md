@@ -71,6 +71,4 @@ The documentation of the warc library is available at http://warc.readthedocs.or
 License
 -------
 
-This software is licensed under GPL v2. See LICENSE file for details.
-
-.. LICENSE: I should add a license file, shouldn't I?
+This software is licensed under GPL v2. See [LICENSE](LICENSE.txt) file for details.
