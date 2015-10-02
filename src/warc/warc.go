@@ -275,7 +275,7 @@ func (wf *WARCFile) Close() error {
 type WARCReader struct {
 	filehandle io.Reader
 	gzipfile   *gzip.Reader
-	currentPaylaod *utils.FilePart
+	currentPayload *utils.FilePart
 }
 
 func NewWARCReader(filehandle io.Reader, gzipfile *gzip.Reader) *WARCReader {
@@ -337,12 +337,12 @@ func (wr *WARCReader) Expect(reader *bufio.Reader, expectedLine string, message 
 
 func (wr *WARCReader) FinishReadingCurrentRecord() {
 	// consume the footer from the previous record
-	if wr.currentPaylaod != nil {
+	if wr.currentPayload != nil {
 		// consume all data from the current_payload before moving to next record
-		wr.currentPaylaod.Read(-1)
-		wr.Expect(bufio.NewReader(wr.currentPaylaod.GetReader()), "\r\n", "")
-		wr.Expect(bufio.NewReader(wr.currentPaylaod.GetReader()), "\r\n", "")
-		wr.currentPaylaod = nil
+		wr.currentPayload.Read(-1)
+		wr.Expect(bufio.NewReader(wr.currentPayload.GetReader()), "\r\n", "")
+		wr.Expect(bufio.NewReader(wr.currentPayload.GetReader()), "\r\n", "")
+		wr.currentPayload = nil
 		// start reading the next record in the gzip file
 		wr.gzipfile.Reset(wr.filehandle)
 	}
@@ -358,8 +358,8 @@ func (wr *WARCReader) ReadRecord() (*WARCRecord, error) {
 		return nil, errors.New("EOF")
 	}
 	
-	wr.currentPaylaod = utils.NewFilePart(reader, header.GetContentLength())
-	record := NewWARCRecord(header, wr.currentPaylaod, map[string]string{})
+	wr.currentPayload = utils.NewFilePart(reader, header.GetContentLength())
+	record := NewWARCRecord(header, wr.currentPayload, map[string]string{})
 	return record, nil
 }
 
