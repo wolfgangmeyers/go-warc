@@ -47,7 +47,10 @@ This `warc` library makes it very easy to work with WARC files.::
 
 Installing
 --------
-Make sure you have a working go environment. Instructions can be found here: https://golang.org/doc/install
+Make sure you have a working go environment. Instructions can be found here:
+
+https://golang.org/doc/install
+
 Currently go-warc builds against the standard go library with no external dependencies. To install the
 go-warc library:
 
@@ -68,6 +71,6 @@ The documentation of the warc library is available at http://warc.readthedocs.or
 License
 -------
 
-This software is licensed under GPL v2. See LICENSE_ file for details.
+This software is licensed under GPL v2. See LICENSE file for details.
 
 .. LICENSE: I should add a license file, shouldn't I?
