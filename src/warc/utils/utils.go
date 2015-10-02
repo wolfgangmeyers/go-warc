@@ -62,14 +62,24 @@ type FilePart struct {
 }
 
 // Creates a new FilePart object
-func NewFilePart(fileobj io.Reader, length int) *FilePart {
+func NewFilePart(fileobj io.Reader, length int) (*FilePart, error) {
 	filePart := &FilePart{
 		fileobj: fileobj,
 		length:  length,
 		offset:  0,
 		buf:     []byte{},
 	}
-	return filePart
+	// Fix for thread-safety: fully read the contents of the FilePart
+	// initially and put the contents in the buffer. This allows the
+	// contents to be used by a different thread, freeing up the underlying
+	// reader.
+	buf, err := filePart.Read(-1)
+	if err != nil && err.Error() != "EOF" {
+		return nil, err
+	}
+	filePart.offset = 0
+	filePart.fileobj = bytes.NewBuffer(buf)
+	return filePart, nil
 }
 
 // reads up until the size specified

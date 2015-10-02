@@ -68,26 +68,26 @@ func (s *FilePartSuite) SetUpSuite(c *C) {
 }
 
 func (s *FilePartSuite) TestRead(c *C) {
-	part := NewFilePart(strings.NewReader(s.text), 0)
+	part, _ := NewFilePart(strings.NewReader(s.text), 0)
 	data, _ := part.Read(-1)
 	c.Assert(string(data), Equals, "")
 	
-	part = NewFilePart(strings.NewReader(s.text), 5)
+	part, _ = NewFilePart(strings.NewReader(s.text), 5)
 	data, _ = part.Read(-1)
 	c.Assert(string(data), Equals, "aaaa\n")
 	
-	part = NewFilePart(strings.NewReader(s.text), 10)
+	part, _ = NewFilePart(strings.NewReader(s.text), 10)
 	data, _ = part.Read(-1)
 	c.Assert(string(data), Equals, "aaaa\nbbbb\n")
 	
 	// try with large data
-	part = NewFilePart(strings.NewReader(strings.Repeat("a", 10000)), 10)
+	part, _ = NewFilePart(strings.NewReader(strings.Repeat("a", 10000)), 10)
 	data, _ = part.Read(-1)
 	c.Assert(len(data), Equals, 10)
 }
 
 func (s *FilePartSuite) TestReadWithSize(c *C) {
-	part := NewFilePart(strings.NewReader(s.text), 10)
+	part, _ := NewFilePart(strings.NewReader(s.text), 10)
 	data, _ := part.Read(3)
 	c.Assert(string(data), Equals, "aaa")
 	data, _ = part.Read(3)
@@ -101,7 +101,7 @@ func (s *FilePartSuite) TestReadWithSize(c *C) {
 }
 
 func (s *FilePartSuite) TestReadline(c *C) {
-	part := NewFilePart(strings.NewReader(s.text), 11)
+	part, _ := NewFilePart(strings.NewReader(s.text), 11)
 	data, _ := part.ReadLine()
 	c.Assert(string(data), Equals, "aaaa\n")
 	data, _ = part.ReadLine()
@@ -113,7 +113,7 @@ func (s *FilePartSuite) TestReadline(c *C) {
 }
 
 func (s *FilePartSuite) TestIterate(c *C) {
-	part := NewFilePart(strings.NewReader(s.text), 11)
+	part, _ := NewFilePart(strings.NewReader(s.text), 11)
 	result := []string{}
 	part.Iterate(func(line []byte) {
 		result = append(result, string(line))
