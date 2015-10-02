@@ -19,7 +19,7 @@ This `warc` library makes it very easy to work with WARC files.::
     import (
         "fmt"
         "os"
-        "warc"
+        "bitbucket.org/donutsinc/go-warc/warc"
     )
     
     func main() {
