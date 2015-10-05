@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 //	"time" // needed for read/write
-	"warc/utils"
+	"bitbucket.org/donutsinc/go-warc/warc/utils"
 )
 
 var CONTENT_TYPES map[string]string = map[string]string{
