@@ -19,7 +19,7 @@ This `warc` library makes it very easy to work with WARC files.::
     import (
         "fmt"
         "os"
-        "bitbucket.org/donutsinc/go-warc/warc"
+        "github.com/wolfgangmeyers/go-warc/warc"
     )
     
     func main() {
@@ -54,8 +54,8 @@ https://golang.org/doc/install
 Currently go-warc builds against the standard go library with no external dependencies. To install the
 go-warc library:
 
-    go get bitbucket.org/donutsinc/go-warc/warc
-    go get bitbucket.org/donutsinc/go-warc/warc/utils
+    go get github.com/wolfgangmeyers/go-warc/warc
+    go get github.com/wolfgangmeyers/go-warc/warc/utils
 
 Testing
 -------
