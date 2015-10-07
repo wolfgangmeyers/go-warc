@@ -30,7 +30,7 @@ import (
 	"strconv"
 	"strings"
 //	"time" // needed for read/write
-	"bitbucket.org/donutsinc/go-warc/warc/utils"
+	"github.com/wolfgangmeyers/go-warc/warc/utils"
 )
 
 var CONTENT_TYPES map[string]string = map[string]string{
@@ -362,7 +362,7 @@ func (wr *WARCReader) ReadRecord() (*WARCRecord, error) {
 		return nil, errors.New("EOF")
 	}
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	payload, err := utils.NewFilePart(reader, header.GetContentLength())
 	if err != nil {
