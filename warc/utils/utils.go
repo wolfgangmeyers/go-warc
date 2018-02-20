@@ -1,4 +1,5 @@
 package utils
+
 /*
 	Copyright (C) 2015  Wolfgang Meyers
 
@@ -18,10 +19,10 @@ package utils
 */
 import (
 	"bytes"
+	"errors"
 	"io"
 	"math"
 	"strings"
-	"errors"
 )
 
 // Provides map-like behavior with case-insensitive keys
@@ -70,10 +71,11 @@ func (mm *CIStringMap) Items(callback func(string, string)) {
 
 // File interface over a part of a file
 type FilePart struct {
-	fileobj io.Reader
-	length  int
-	offset  int
-	buf     []byte
+	fileobj  io.Reader
+	filedata []byte // The contents of the file part are captured on instantiation
+	length   int
+	offset   int
+	buf      []byte
 }
 
 // Creates a new FilePart object
@@ -98,10 +100,17 @@ func NewFilePart(fileobj io.Reader, length int) (*FilePart, error) {
 			buf = append(buf, tmp...)
 		}
 	}
-	
+
 	filePart.offset = 0
+	filePart.filedata = buf
 	filePart.fileobj = bytes.NewBuffer(buf)
 	return filePart, nil
+}
+
+// GetData returns the data that was cached from the
+// initial read of the FilePart during instantiation.
+func (fp *FilePart) GetData() []byte {
+	return fp.filedata
 }
 
 // reads up until the size specified
@@ -124,9 +133,9 @@ func (fp *FilePart) read(size int) ([]byte, error) {
 		// if this read doesn't succeed, that's ok
 		// because the buffer might still have content
 		numRead, _ := fp.fileobj.Read(tmp)
-//		if err != nil {
-//			return nil, err
-//		}
+		//		if err != nil {
+		//			return nil, err
+		//		}
 		tmp = tmp[:numRead]
 		content = append(fp.buf, tmp...)
 		fp.buf = []byte{}
@@ -137,7 +146,7 @@ func (fp *FilePart) read(size int) ([]byte, error) {
 	} else {
 		return content, nil
 	}
-	
+
 }
 
 // backs up the reader to the beginning of the content
@@ -153,7 +162,7 @@ func (fp *FilePart) ReadLine() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	for findNewline(chunk) == -1 {
 		result = append(result, chunk...)
 		chunk, err = fp.read(1024)
